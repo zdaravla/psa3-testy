@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0059)file:///C:/Users/zdara/Downloads/psa3_test_evaluator_8.html -->
+<!-- saved from url=(0060)file:///C:/Users/zdara/Downloads/psa3_test_evaluator_16.html -->
 <html lang="cs"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
@@ -92,6 +92,10 @@ input[type=file] { display: none; }
 .opt.wrong { background: var(--red); border-color: var(--red); color: #fff; }
 .opt.missed { background: var(--amber-light); border-color: var(--amber); color: var(--amber); }
 .opt.uncertain { background: #e8e8e8; border-color: #aaa; color: #666; }
+.opt.circled { background: #e0e0e0; border-color: #999; color: #333; }
+.opt.circled-wrong { background: #e0e0e0; border-color: #cc0000; color: #cc0000; font-weight: 700; font-size: 16px; }
+.opt.circled { background: #e0e0e0; border-color: #999; color: #333; }
+.opt.circled-wrong { background: #e0e0e0; border-color: #cc0000; color: #cc0000; font-weight: 700; font-size: 16px; }
 .opt.empty { background: var(--bg); color: var(--border); border-color: var(--border); cursor: default; }
 
 .sep { height: 1px; background: var(--border); margin: 12px 0; }
@@ -144,18 +148,18 @@ td:first-child { text-align: left; }
 
 <div class="nav">
   <h1>PSA3 Testy</h1>
-  <span class="nav-sub" id="nav-sub">—</span>
+  <span class="nav-sub" id="nav-sub">Kontrola: 0 / 1 potvrzeno</span>
 </div>
 
 <div class="tabs">
-  <button class="tab active" onclick="goTab(0)"><span class="tab-icon">📄</span>PDF<span class="badge" id="badge-0"></span></button>
-  <button class="tab" onclick="goTab(1)"><span class="tab-icon">🔑</span>Klíč<span class="badge" id="badge-1"></span></button>
-  <button class="tab" onclick="goTab(2)"><span class="tab-icon">✅</span>Kontrola<span class="badge" id="badge-2"></span></button>
+  <button class="tab" onclick="goTab(0)"><span class="tab-icon">📄</span>PDF<span class="badge show" id="badge-0">✓</span></button>
+  <button class="tab" onclick="goTab(1)"><span class="tab-icon">🔑</span>Klíč<span class="badge show" id="badge-1">1</span></button>
+  <button class="tab active" onclick="goTab(2)"><span class="tab-icon">✅</span>Kontrola<span class="badge show" id="badge-2">1</span></button>
   <button class="tab" onclick="goTab(3)"><span class="tab-icon">📊</span>Výsledky<span class="badge" id="badge-3"></span></button>
 </div>
 
 <!-- ===== TAB 0: PDF ===== -->
-<div class="page active" id="page-0">
+<div class="page" id="page-0">
   <div class="card">
     <div class="card-title">Nahrání PDF</div>
     <div class="form-group" style="margin-bottom:14px">
@@ -164,59 +168,190 @@ td:first-child { text-align: left; }
       <div style="font-size:11px;color:var(--muted);margin-top:4px">Klíč se uloží lokálně v prohlížeči. Najdeš ho na console.anthropic.com</div>
     </div>
     <p style="font-size:13px;color:var(--muted);margin-bottom:14px">PDF musí obsahovat: seznam studentů z KOSu, vzorové formuláře (jméno VZOR, správné odpovědi zakroužkované), vyplněné formuláře studentů.</p>
-    <div class="upload-area" id="upload-area" onclick="document.getElementById(&#39;pdf-input&#39;).click()">
-      <span class="upload-icon">📎</span>
-      <strong>Klepni pro výběr PDF</strong><br>
-      <span style="font-size:12px;margin-top:4px;display:block">ze souborů nebo OneDrive</span>
-    </div>
+    <div class="upload-area has-file" id="upload-area" onclick="document.getElementById(&#39;pdf-input&#39;).click()"><span class="upload-icon">📄</span><strong>20260528_9.04.pdf</strong><br><span style="font-size:12px">1.0 MB · klepni pro změnu</span></div>
     <input type="file" id="pdf-input" accept="application/pdf" onchange="handlePDF(event)">
   </div>
 
-  <div class="card" id="card-process" style="display:none">
+  <div class="card" id="card-process" style="">
     <div class="card-title">Zpracování</div>
-    <div id="pdf-file-info" style="font-size:13px;color:var(--muted);margin-bottom:12px"></div>
-    <div id="process-status" style="display:none" class="status-msg s-loading"></div>
-    <div class="progress-bar" id="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
-    <button class="btn btn-primary" id="btn-process" onclick="processPDF()">🔍 Spustit rozpoznávání</button>
+    <div id="pdf-file-info" style="font-size:13px;color:var(--muted);margin-bottom:12px">20260528_9.04.pdf · 1.03 MB</div>
+    <div id="process-status" style="" class="status-msg s-ok">✓ Rozpoznáno: 28 studentů v KOS, 1 skupin (A), 1 formulářů</div>
+    <div class="progress-bar" id="progress-bar"><div class="progress-fill" id="progress-fill" style="width: 100%;"></div></div>
+    <button class="btn btn-primary" id="btn-process" onclick="processPDF()" disabled="">🔍 Spustit rozpoznávání</button>
   </div>
 </div>
 
 <!-- ===== TAB 1: KLÍČ ===== -->
 <div class="page" id="page-1">
-  <div class="card" id="key-empty-card">
+  <div class="card" id="key-empty-card" style="display: none;">
     <div class="empty" style="padding:30px 0">
       <span class="empty-icon">🔑</span>
       <span style="font-size:14px">Klíče se načtou ze vzorových formulářů po zpracování PDF</span>
     </div>
   </div>
-  <div id="key-content" style="display:none">
+  <div id="key-content" style="">
     <div class="card">
       <div class="card-title">Správné odpovědi dle skupin</div>
       <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Rozpoznáno ze vzorových formulářů. Klepnutím oprav případné chyby.</p>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px" id="key-group-tabs"></div>
-      <div id="key-grid"></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px" id="key-group-tabs"><button class="btn btn-sm btn-primary" onclick="selectKeyGroup(&#39;A&#39;)">A</button></div>
+      <div id="key-grid"><div class="ag ag-4" style="margin-bottom:6px">
+    <div style="font-size:11px;color:var(--muted);text-align:center">Q</div>
+    <div style="font-size:12px;font-weight:700;color:var(--muted);text-align:center">A</div><div style="font-size:12px;font-weight:700;color:var(--muted);text-align:center">B</div><div style="font-size:12px;font-weight:700;color:var(--muted);text-align:center">C</div><div style="font-size:12px;font-weight:700;color:var(--muted);text-align:center">D</div>
+  </div><div class="ag ag-4">
+      <div class="q-num">1</div>
+      <button class="opt sel-key" onclick="toggleKeyOpt(0,&#39;A&#39;)">A</button><button class="opt " onclick="toggleKeyOpt(0,&#39;B&#39;)">B</button><button class="opt " onclick="toggleKeyOpt(0,&#39;C&#39;)">C</button><button class="opt " onclick="toggleKeyOpt(0,&#39;D&#39;)">D</button>
+    </div><div class="ag ag-4">
+      <div class="q-num">2</div>
+      <button class="opt " onclick="toggleKeyOpt(1,&#39;A&#39;)">A</button><button class="opt sel-key" onclick="toggleKeyOpt(1,&#39;B&#39;)">B</button><button class="opt sel-key" onclick="toggleKeyOpt(1,&#39;C&#39;)">C</button><button class="opt " onclick="toggleKeyOpt(1,&#39;D&#39;)">D</button>
+    </div><div class="ag ag-4">
+      <div class="q-num">3</div>
+      <button class="opt " onclick="toggleKeyOpt(2,&#39;A&#39;)">A</button><button class="opt " onclick="toggleKeyOpt(2,&#39;B&#39;)">B</button><button class="opt sel-key" onclick="toggleKeyOpt(2,&#39;C&#39;)">C</button><button class="opt sel-key" onclick="toggleKeyOpt(2,&#39;D&#39;)">D</button>
+    </div><div class="ag ag-4">
+      <div class="q-num">4</div>
+      <button class="opt sel-key" onclick="toggleKeyOpt(3,&#39;A&#39;)">A</button><button class="opt " onclick="toggleKeyOpt(3,&#39;B&#39;)">B</button><button class="opt " onclick="toggleKeyOpt(3,&#39;C&#39;)">C</button><button class="opt " onclick="toggleKeyOpt(3,&#39;D&#39;)">D</button>
+    </div><div class="ag ag-4">
+      <div class="q-num">5</div>
+      <button class="opt " onclick="toggleKeyOpt(4,&#39;A&#39;)">A</button><button class="opt sel-key" onclick="toggleKeyOpt(4,&#39;B&#39;)">B</button><button class="opt " onclick="toggleKeyOpt(4,&#39;C&#39;)">C</button><button class="opt " onclick="toggleKeyOpt(4,&#39;D&#39;)">D</button>
+    </div><div class="ag ag-4">
+      <div class="q-num">6</div>
+      <button class="opt sel-key" onclick="toggleKeyOpt(5,&#39;A&#39;)">A</button><button class="opt sel-key" onclick="toggleKeyOpt(5,&#39;B&#39;)">B</button><button class="opt " onclick="toggleKeyOpt(5,&#39;C&#39;)">C</button><button class="opt " onclick="toggleKeyOpt(5,&#39;D&#39;)">D</button>
+    </div><div class="ag ag-4">
+      <div class="q-num">7</div>
+      <button class="opt " onclick="toggleKeyOpt(6,&#39;A&#39;)">A</button><button class="opt sel-key" onclick="toggleKeyOpt(6,&#39;B&#39;)">B</button><button class="opt sel-key" onclick="toggleKeyOpt(6,&#39;C&#39;)">C</button><button class="opt " onclick="toggleKeyOpt(6,&#39;D&#39;)">D</button>
+    </div><div class="ag ag-4">
+      <div class="q-num">8</div>
+      <button class="opt sel-key" onclick="toggleKeyOpt(7,&#39;A&#39;)">A</button><button class="opt " onclick="toggleKeyOpt(7,&#39;B&#39;)">B</button><button class="opt " onclick="toggleKeyOpt(7,&#39;C&#39;)">C</button><button class="opt " onclick="toggleKeyOpt(7,&#39;D&#39;)">D</button>
+    </div><div class="ag ag-4">
+      <div class="q-num">9</div>
+      <button class="opt " onclick="toggleKeyOpt(8,&#39;A&#39;)">A</button><button class="opt sel-key" onclick="toggleKeyOpt(8,&#39;B&#39;)">B</button><button class="opt " onclick="toggleKeyOpt(8,&#39;C&#39;)">C</button><button class="opt " onclick="toggleKeyOpt(8,&#39;D&#39;)">D</button>
+    </div><div class="ag ag-4">
+      <div class="q-num">10</div>
+      <button class="opt " onclick="toggleKeyOpt(9,&#39;A&#39;)">A</button><button class="opt " onclick="toggleKeyOpt(9,&#39;B&#39;)">B</button><button class="opt " onclick="toggleKeyOpt(9,&#39;C&#39;)">C</button><button class="opt sel-key" onclick="toggleKeyOpt(9,&#39;D&#39;)">D</button>
+    </div><div class="ag ag-4">
+      <div class="q-num">11</div>
+      <button class="opt " onclick="toggleKeyOpt(10,&#39;A&#39;)">A</button><button class="opt " onclick="toggleKeyOpt(10,&#39;B&#39;)">B</button><button class="opt " onclick="toggleKeyOpt(10,&#39;C&#39;)">C</button><button class="opt sel-key" onclick="toggleKeyOpt(10,&#39;D&#39;)">D</button>
+    </div><div class="ag ag-4">
+      <div class="q-num">12</div>
+      <button class="opt " onclick="toggleKeyOpt(11,&#39;A&#39;)">A</button><button class="opt " onclick="toggleKeyOpt(11,&#39;B&#39;)">B</button><button class="opt sel-key" onclick="toggleKeyOpt(11,&#39;C&#39;)">C</button><button class="opt " onclick="toggleKeyOpt(11,&#39;D&#39;)">D</button>
+    </div><div class="ag ag-4">
+      <div class="q-num">13</div>
+      <button class="opt " onclick="toggleKeyOpt(12,&#39;A&#39;)">A</button><button class="opt sel-key" onclick="toggleKeyOpt(12,&#39;B&#39;)">B</button><button class="opt " onclick="toggleKeyOpt(12,&#39;C&#39;)">C</button><button class="opt " onclick="toggleKeyOpt(12,&#39;D&#39;)">D</button>
+    </div><div class="ag ag-4">
+      <div class="q-num">14</div>
+      <button class="opt sel-key" onclick="toggleKeyOpt(13,&#39;A&#39;)">A</button><button class="opt " onclick="toggleKeyOpt(13,&#39;B&#39;)">B</button><button class="opt " onclick="toggleKeyOpt(13,&#39;C&#39;)">C</button><button class="opt " onclick="toggleKeyOpt(13,&#39;D&#39;)">D</button>
+    </div><div class="ag ag-4">
+      <div class="q-num">15</div>
+      <button class="opt " onclick="toggleKeyOpt(14,&#39;A&#39;)">A</button><button class="opt sel-key" onclick="toggleKeyOpt(14,&#39;B&#39;)">B</button><button class="opt " onclick="toggleKeyOpt(14,&#39;C&#39;)">C</button><button class="opt " onclick="toggleKeyOpt(14,&#39;D&#39;)">D</button>
+    </div></div>
     </div>
     <button class="btn btn-green" onclick="evaluateAll()">⚡ Vyhodnotit všechny testy</button>
   </div>
 </div>
 
 <!-- ===== TAB 2: KONTROLA ===== -->
-<div class="page" id="page-2">
-  <div class="empty" id="ctrl-empty">
+<div class="page active" id="page-2">
+  <div class="empty" id="ctrl-empty" style="display: none;">
     <span class="empty-icon">✅</span>
     <span style="font-size:14px">Po vyhodnocení zde projdeš každý test</span>
   </div>
-  <div id="ctrl-content" style="display:none">
-    <div class="step-indicator" id="step-indicator"></div>
+  <div id="ctrl-content" style="">
+    <div class="step-indicator" id="step-indicator"><div class="step-dot current" onclick="jumpStudent(0)" title="HOLÝ KRYŠTOF"></div></div>
     <div class="student-nav">
-      <button class="btn btn-secondary btn-sm" id="btn-prev" onclick="navStudent(-1)">‹ Předchozí</button>
+      <button class="btn btn-secondary btn-sm" id="btn-prev" onclick="navStudent(-1)" disabled="">‹ Předchozí</button>
       <div class="student-nav-info">
-        <strong id="nav-student-name">—</strong>
+        <strong id="nav-student-name">HOLÝ KRYŠTOF</strong>
         <span id="nav-student-pos">1 / 1</span>
       </div>
-      <button class="btn btn-secondary btn-sm" id="btn-next" onclick="navStudent(1)">Další ›</button>
+      <button class="btn btn-secondary btn-sm" id="btn-next" onclick="navStudent(1)" disabled="">Další ›</button>
     </div>
-    <div id="ctrl-card"></div>
+    <div id="ctrl-card"><div class="card"><div class="form-row" style="margin-bottom:10px">
+    <div class="form-group" style="margin:0">
+      <label>Jméno</label>
+      <input type="text" value="HOLÝ KRYŠTOF" onchange="updateStu(&#39;jmeno&#39;,this.value)">
+    </div>
+    <div class="form-group" style="margin:0">
+      <label>Osobní číslo</label>
+      <input type="text" value="533832" maxlength="6" onchange="updateStu(&#39;cislo&#39;,this.value);recheckKos()">
+    </div>
+  </div><div class="form-group" style="margin-bottom:12px">
+    <label>Skupina</label>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn btn-sm btn-primary" onclick="updateStu(&#39;skupina&#39;,&#39;A&#39;);renderStudentCard()">A</button>
+    </div>
+  </div><div class="status-msg s-ok" style="font-size:12px;padding:7px 12px;margin-bottom:10px">✓ KOS: Holý Kryštof · 533832</div><div class="status-msg s-warn" style="font-size:12px;padding:7px 12px;margin-bottom:10px">⚠ Zkontroluj otázky: 2, 3, 6, 7, 8, 14, 15 — důvody viz u každé otázky níže</div><div style="margin-bottom:12px">
+    <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">Odpovědi · klepnutím oprav</div>
+    <div class="ag ag-4" style="margin-bottom:6px">
+      <div></div>
+      <div style="font-size:12px;font-weight:700;color:var(--muted);text-align:center">A</div><div style="font-size:12px;font-weight:700;color:var(--muted);text-align:center">B</div><div style="font-size:12px;font-weight:700;color:var(--muted);text-align:center">C</div><div style="font-size:12px;font-weight:700;color:var(--muted);text-align:center">D</div>
+    </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
+      <div class="q-num" style="">1</div>
+      <button class="opt circled" onclick="toggleStuOpt(0,&#39;A&#39;)">A</button><button class="opt " onclick="toggleStuOpt(0,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(0,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(0,&#39;D&#39;)">D</button>
+      <div style="font-size:13px;font-weight:700;color:var(--green);text-align:right">4</div>
+    </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
+      <div class="q-num" style="color:var(--amber)">⚠</div>
+      <button class="opt circled-wrong" onclick="toggleStuOpt(1,&#39;A&#39;)">A</button><button class="opt circled" onclick="toggleStuOpt(1,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(1,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(1,&#39;D&#39;)">D</button>
+      <div style="font-size:13px;font-weight:700;color:var(--red);text-align:right">0</div>
+    </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
+      <div class="q-num" style="color:var(--amber)">⚠</div>
+      <button class="opt " onclick="toggleStuOpt(2,&#39;A&#39;)">A</button><button class="opt circled-wrong" onclick="toggleStuOpt(2,&#39;B&#39;)">B</button><button class="opt circled" onclick="toggleStuOpt(2,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(2,&#39;D&#39;)">D</button>
+      <div style="font-size:13px;font-weight:700;color:var(--red);text-align:right">0</div>
+    </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
+      <div class="q-num" style="">4</div>
+      <button class="opt circled" onclick="toggleStuOpt(3,&#39;A&#39;)">A</button><button class="opt " onclick="toggleStuOpt(3,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(3,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(3,&#39;D&#39;)">D</button>
+      <div style="font-size:13px;font-weight:700;color:var(--green);text-align:right">4</div>
+    </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
+      <div class="q-num" style="">5</div>
+      <button class="opt " onclick="toggleStuOpt(4,&#39;A&#39;)">A</button><button class="opt circled" onclick="toggleStuOpt(4,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(4,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(4,&#39;D&#39;)">D</button>
+      <div style="font-size:13px;font-weight:700;color:var(--green);text-align:right">4</div>
+    </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
+      <div class="q-num" style="color:var(--amber)">⚠</div>
+      <button class="opt circled" onclick="toggleStuOpt(5,&#39;A&#39;)">A</button><button class="opt circled" onclick="toggleStuOpt(5,&#39;B&#39;)">B</button><button class="opt circled-wrong" onclick="toggleStuOpt(5,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(5,&#39;D&#39;)">D</button>
+      <div style="font-size:13px;font-weight:700;color:var(--amber);text-align:right">2</div>
+    </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
+      <div class="q-num" style="color:var(--amber)">⚠</div>
+      <button class="opt circled-wrong" onclick="toggleStuOpt(6,&#39;A&#39;)">A</button><button class="opt circled" onclick="toggleStuOpt(6,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(6,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(6,&#39;D&#39;)">D</button>
+      <div style="font-size:13px;font-weight:700;color:var(--red);text-align:right">0</div>
+    </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
+      <div class="q-num" style="color:var(--amber)">⚠</div>
+      <button class="opt " onclick="toggleStuOpt(7,&#39;A&#39;)">A</button><button class="opt circled-wrong" onclick="toggleStuOpt(7,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(7,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(7,&#39;D&#39;)">D</button>
+      <div style="font-size:13px;font-weight:700;color:var(--red);text-align:right">0</div>
+    </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
+      <div class="q-num" style="">9</div>
+      <button class="opt " onclick="toggleStuOpt(8,&#39;A&#39;)">A</button><button class="opt circled" onclick="toggleStuOpt(8,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(8,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(8,&#39;D&#39;)">D</button>
+      <div style="font-size:13px;font-weight:700;color:var(--green);text-align:right">4</div>
+    </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
+      <div class="q-num" style="">10</div>
+      <button class="opt " onclick="toggleStuOpt(9,&#39;A&#39;)">A</button><button class="opt circled-wrong" onclick="toggleStuOpt(9,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(9,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(9,&#39;D&#39;)">D</button>
+      <div style="font-size:13px;font-weight:700;color:var(--red);text-align:right">0</div>
+    </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
+      <div class="q-num" style="">11</div>
+      <button class="opt " onclick="toggleStuOpt(10,&#39;A&#39;)">A</button><button class="opt " onclick="toggleStuOpt(10,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(10,&#39;C&#39;)">C</button><button class="opt circled" onclick="toggleStuOpt(10,&#39;D&#39;)">D</button>
+      <div style="font-size:13px;font-weight:700;color:var(--green);text-align:right">4</div>
+    </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
+      <div class="q-num" style="">12</div>
+      <button class="opt " onclick="toggleStuOpt(11,&#39;A&#39;)">A</button><button class="opt " onclick="toggleStuOpt(11,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(11,&#39;C&#39;)">C</button><button class="opt circled-wrong" onclick="toggleStuOpt(11,&#39;D&#39;)">D</button>
+      <div style="font-size:13px;font-weight:700;color:var(--red);text-align:right">0</div>
+    </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
+      <div class="q-num" style="">13</div>
+      <button class="opt " onclick="toggleStuOpt(12,&#39;A&#39;)">A</button><button class="opt " onclick="toggleStuOpt(12,&#39;B&#39;)">B</button><button class="opt circled-wrong" onclick="toggleStuOpt(12,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(12,&#39;D&#39;)">D</button>
+      <div style="font-size:13px;font-weight:700;color:var(--red);text-align:right">0</div>
+    </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
+      <div class="q-num" style="color:var(--amber)">⚠</div>
+      <button class="opt " onclick="toggleStuOpt(13,&#39;A&#39;)">A</button><button class="opt circled-wrong" onclick="toggleStuOpt(13,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(13,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(13,&#39;D&#39;)">D</button>
+      <div style="font-size:13px;font-weight:700;color:var(--red);text-align:right">0</div>
+    </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
+      <div class="q-num" style="color:var(--amber)">⚠</div>
+      <button class="opt circled-wrong" onclick="toggleStuOpt(14,&#39;A&#39;)">A</button><button class="opt circled" onclick="toggleStuOpt(14,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(14,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(14,&#39;D&#39;)">D</button>
+      <div style="font-size:13px;font-weight:700;color:var(--amber);text-align:right">2</div>
+    </div></div><div style="text-align:center;padding:12px 0;border-top:1px solid var(--border);margin-bottom:0">
+    <div class="score-big" style="color:var(--red)">24.0</div>
+    <div class="score-sub">z 60 bodů · 40 %</div>
+  </div>
+  <div style="text-align:center;padding:12px 0;border-bottom:1px solid var(--border);margin-bottom:14px;font-size:18px;font-weight:700;letter-spacing:0.02em;color:var(--red);background:var(--red-light)">
+    ✗ NEPROŠEL
+  </div><button class="btn btn-green" onclick="confirmStudent()">
+    ✓ Potvrdit a uložit
+  </button></div></div>
   </div>
 </div>
 
@@ -458,7 +593,7 @@ function calcQScore(qIdx, studentOpts, skupina) {
   let chyby=0;
   ansSet.forEach(o=>{ if(!keySet.has(o)) chyby++; });
   keySet.forEach(o=>{ if(!ansSet.has(o)) chyby++; });
-  return {score: Math.max(0, 4-chyby), max:4};
+  return {score: Math.max(0, 4-chyby*2), max:4};
 }
 
 function calcTotal(odpovedi, skupina) {
@@ -593,14 +728,15 @@ function renderStudentCard() {
     html+=`<div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
       <div class="q-num" style="${uncertain?'color:var(--amber)':''}">${uncertain?'⚠':q+1}</div>
       ${OPTS.map(o=>{
+        const isCircled = ans.has(o);
+        const isWrong = (ans.has(o) && !keySet.has(o)) || (!ans.has(o) && keySet.has(o));
         let cls='';
-        if(ans.has(o)) cls=keySet.has(o)?'correct':'wrong';
-        else if(keySet.has(o)) cls='missed';
+        if(isCircled && isWrong) cls='circled-wrong';
+        else if(isCircled) cls='circled';
         return `<button class="opt ${cls}" onclick="toggleStuOpt(${q},'${o}')">${o}</button>`;
       }).join('')}
       <div style="font-size:13px;font-weight:700;color:${scoreCol};text-align:right">${qScore.toFixed(0)}</div>
     </div>`;
-    if(uncertain&&pozn) html+=`<div style="font-size:11px;color:var(--amber);padding:1px 0 5px 36px;line-height:1.4">↳ ${escHtml(pozn)}</div>`;
   }
   html+=`</div>`;
 
@@ -704,19 +840,24 @@ function exportCSV() {
   const confirmed=students.filter(s=>s.confirmed);
   if(!confirmed.length) return;
   let csv='\uFEFF';
-  let hdr='Příjmení,Jméno';
+  let hdr='Příjmení,Jméno,Osobní číslo';
   for(let q=1;q<=numQ;q++) hdr+=`,Q${q}`;
-  hdr+=',Celkem,Procenta,Skupina,Osobní číslo';
+  hdr+=',Celkem,Vyhověl';
   csv+=hdr+'\n';
-  confirmed.sort((a,b)=>(a.matched?a.matched.prijmeni:a.jmeno).localeCompare(b.matched?b.matched.prijmeni:b.jmeno,'cs')).forEach(s=>{
+  confirmed.sort((a,b)=>{
+    const pa=a.matched?a.matched.prijmeni:(a.jmeno.split(' ')[0]||a.jmeno);
+    const pb=b.matched?b.matched.prijmeni:(b.jmeno.split(' ')[0]||b.jmeno);
+    return pa.localeCompare(pb,'cs');
+  }).forEach(s=>{
     const prijmeni=s.matched?s.matched.prijmeni:(s.jmeno.split(' ')[0]||s.jmeno);
     const jmeno=s.matched?s.matched.jmeno:(s.jmeno.split(' ').slice(1).join(' ')||'');
-    let row=`"${prijmeni}","${jmeno}"`;
+    const passed=s.total>=(numQ*4*0.5);
+    let row=`"${prijmeni}","${jmeno}",${s.cislo}`;
     for(let q=1;q<=numQ;q++) {
       const sc=calcQScore(q-1,s.odpovedi[q.toString()]||'',s.skupina).score;
       row+=','+sc.toFixed(0);
     }
-    row+=`,${s.total.toFixed(0)},${s.pct},${s.skupina},${s.cislo}`;
+    row+=`,${s.total.toFixed(0)},${passed?'ANO':'NE'}`;
     csv+=row+'\n';
   });
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
