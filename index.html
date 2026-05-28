@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0060)file:///C:/Users/zdara/Downloads/psa3_test_evaluator_19.html -->
+<!-- saved from url=(0060)file:///C:/Users/zdara/Downloads/psa3_test_evaluator_21.html -->
 <html lang="cs"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
@@ -179,7 +179,7 @@ td:first-child { text-align: left; }
     <div id="pdf-file-info" style="font-size:13px;color:var(--muted);margin-bottom:12px">20260528_9.04.pdf · 1.03 MB</div>
     <div id="process-status" style="" class="status-msg s-ok">✓ Rozpoznáno: 28 studentů v KOS, 1 skupin (A), 1 formulářů</div>
     <div class="progress-bar" id="progress-bar"><div class="progress-fill" id="progress-fill" style="width: 100%;"></div></div>
-    <button class="btn btn-primary" id="btn-process" onclick="processPDF()" disabled="">🔍 Spustit rozpoznávání</button>
+    <button class="btn btn-primary" id="btn-process" onclick="processPDF()">🔍 Spustit rozpoznávání</button>
   </div>
 </div>
 
@@ -295,7 +295,7 @@ td:first-child { text-align: left; }
       <div style="font-size:13px;font-weight:700;color:var(--red);text-align:right">0</div>
     </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
       <div class="q-num" style="color:var(--amber)">⚠</div>
-      <button class="opt " onclick="toggleStuOpt(2,&#39;A&#39;)">A</button><button class="opt circled-wrong" onclick="toggleStuOpt(2,&#39;B&#39;)">B</button><button class="opt circled" onclick="toggleStuOpt(2,&#39;C&#39;)">C</button><button class="opt missed-wrong" onclick="toggleStuOpt(2,&#39;D&#39;)">D</button>
+      <button class="opt " onclick="toggleStuOpt(2,&#39;A&#39;)">A</button><button class="opt circled-wrong" onclick="toggleStuOpt(2,&#39;B&#39;)">B</button><button class="opt missed-wrong" onclick="toggleStuOpt(2,&#39;C&#39;)">C</button><button class="opt missed-wrong" onclick="toggleStuOpt(2,&#39;D&#39;)">D</button>
       <div style="font-size:13px;font-weight:700;color:var(--red);text-align:right">0</div>
     </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
       <div class="q-num" style="">4</div>
@@ -501,7 +501,9 @@ Pole "poznamky" je objekt kde klíč = číslo otázky (string), hodnota = stru�
     if(data.error) throw new Error(data.error.message);
     const text = data.content.filter(c=>c.type==='text').map(c=>c.text).join('');
     const clean = text.replace(/^```json\s*/,'').replace(/\s*```$/,'').trim();
-    const parsed = JSON.parse(clean);
+    let parsed;
+    try { parsed = JSON.parse(clean); }
+    catch(e) { throw new Error('Nepodařilo se načíst JSON. Odpověď Claude: '+text.substring(0,300)); }
     pfill.style.width='95%';
 
     numQ = parsed.num_questions || 15;
@@ -529,6 +531,7 @@ Pole "poznamky" je objekt kde klíč = číslo otázky (string), hodnota = stru�
     }));
 
     pfill.style.width='100%';
+    btn.disabled=false;
     pst.className='status-msg s-ok';
     pst.innerHTML=`✓ Rozpoznáno: ${kosList.length} studentů v KOS, ${Object.keys(keys).length} skupin (${Object.keys(keys).join(', ')}), ${rawStudents.length} formulářů`;
     setBadge(0,'✓');
@@ -539,7 +542,7 @@ Pole "poznamky" je objekt kde klíč = číslo otázky (string), hodnota = stru�
   } catch(err) {
     pfill.style.width='100%';
     pst.className='status-msg s-err';
-    pst.textContent='Chyba: '+err.message;
+    pst.innerHTML='Chyba: '+err.message+'<br><small style="opacity:0.8">'+String(err.stack||'').substring(0,200)+'</small>';
     btn.disabled=false;
   }
 }
