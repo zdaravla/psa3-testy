@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0060)file:///C:/Users/zdara/Downloads/psa3_test_evaluator_16.html -->
+<!-- saved from url=(0060)file:///C:/Users/zdara/Downloads/psa3_test_evaluator_19.html -->
 <html lang="cs"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
@@ -94,8 +94,10 @@ input[type=file] { display: none; }
 .opt.uncertain { background: #e8e8e8; border-color: #aaa; color: #666; }
 .opt.circled { background: #e0e0e0; border-color: #999; color: #333; }
 .opt.circled-wrong { background: #e0e0e0; border-color: #cc0000; color: #cc0000; font-weight: 700; font-size: 16px; }
+.opt.missed-wrong { background: transparent; border-color: #cc0000; color: #cc0000; font-weight: 700; font-size: 16px; }
 .opt.circled { background: #e0e0e0; border-color: #999; color: #333; }
 .opt.circled-wrong { background: #e0e0e0; border-color: #cc0000; color: #cc0000; font-weight: 700; font-size: 16px; }
+.opt.missed-wrong { background: transparent; border-color: #cc0000; color: #cc0000; font-weight: 700; font-size: 16px; }
 .opt.empty { background: var(--bg); color: var(--border); border-color: var(--border); cursor: default; }
 
 .sep { height: 1px; background: var(--border); margin: 12px 0; }
@@ -278,7 +280,7 @@ td:first-child { text-align: left; }
     <div style="display:flex;gap:6px;flex-wrap:wrap">
       <button class="btn btn-sm btn-primary" onclick="updateStu(&#39;skupina&#39;,&#39;A&#39;);renderStudentCard()">A</button>
     </div>
-  </div><div class="status-msg s-ok" style="font-size:12px;padding:7px 12px;margin-bottom:10px">✓ KOS: Holý Kryštof · 533832</div><div class="status-msg s-warn" style="font-size:12px;padding:7px 12px;margin-bottom:10px">⚠ Zkontroluj otázky: 2, 3, 6, 7, 8, 14, 15 — důvody viz u každé otázky níže</div><div style="margin-bottom:12px">
+  </div><div class="status-msg s-ok" style="font-size:12px;padding:7px 12px;margin-bottom:10px">✓ KOS: Holý Kryštof · 533832</div><div class="status-msg s-warn" style="font-size:12px;padding:7px 12px;margin-bottom:10px">⚠ Zkontroluj otázky: 2, 3, 6, 7, 15 — důvody viz u každé otázky níže</div><div style="margin-bottom:12px">
     <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">Odpovědi · klepnutím oprav</div>
     <div class="ag ag-4" style="margin-bottom:6px">
       <div></div>
@@ -289,11 +291,11 @@ td:first-child { text-align: left; }
       <div style="font-size:13px;font-weight:700;color:var(--green);text-align:right">4</div>
     </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
       <div class="q-num" style="color:var(--amber)">⚠</div>
-      <button class="opt circled-wrong" onclick="toggleStuOpt(1,&#39;A&#39;)">A</button><button class="opt circled" onclick="toggleStuOpt(1,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(1,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(1,&#39;D&#39;)">D</button>
+      <button class="opt circled-wrong" onclick="toggleStuOpt(1,&#39;A&#39;)">A</button><button class="opt circled" onclick="toggleStuOpt(1,&#39;B&#39;)">B</button><button class="opt missed-wrong" onclick="toggleStuOpt(1,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(1,&#39;D&#39;)">D</button>
       <div style="font-size:13px;font-weight:700;color:var(--red);text-align:right">0</div>
     </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
       <div class="q-num" style="color:var(--amber)">⚠</div>
-      <button class="opt " onclick="toggleStuOpt(2,&#39;A&#39;)">A</button><button class="opt circled-wrong" onclick="toggleStuOpt(2,&#39;B&#39;)">B</button><button class="opt circled" onclick="toggleStuOpt(2,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(2,&#39;D&#39;)">D</button>
+      <button class="opt " onclick="toggleStuOpt(2,&#39;A&#39;)">A</button><button class="opt circled-wrong" onclick="toggleStuOpt(2,&#39;B&#39;)">B</button><button class="opt circled" onclick="toggleStuOpt(2,&#39;C&#39;)">C</button><button class="opt missed-wrong" onclick="toggleStuOpt(2,&#39;D&#39;)">D</button>
       <div style="font-size:13px;font-weight:700;color:var(--red);text-align:right">0</div>
     </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
       <div class="q-num" style="">4</div>
@@ -305,15 +307,15 @@ td:first-child { text-align: left; }
       <div style="font-size:13px;font-weight:700;color:var(--green);text-align:right">4</div>
     </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
       <div class="q-num" style="color:var(--amber)">⚠</div>
-      <button class="opt circled" onclick="toggleStuOpt(5,&#39;A&#39;)">A</button><button class="opt circled" onclick="toggleStuOpt(5,&#39;B&#39;)">B</button><button class="opt circled-wrong" onclick="toggleStuOpt(5,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(5,&#39;D&#39;)">D</button>
-      <div style="font-size:13px;font-weight:700;color:var(--amber);text-align:right">2</div>
+      <button class="opt circled" onclick="toggleStuOpt(5,&#39;A&#39;)">A</button><button class="opt circled" onclick="toggleStuOpt(5,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(5,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(5,&#39;D&#39;)">D</button>
+      <div style="font-size:13px;font-weight:700;color:var(--green);text-align:right">4</div>
     </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
       <div class="q-num" style="color:var(--amber)">⚠</div>
-      <button class="opt circled-wrong" onclick="toggleStuOpt(6,&#39;A&#39;)">A</button><button class="opt circled" onclick="toggleStuOpt(6,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(6,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(6,&#39;D&#39;)">D</button>
+      <button class="opt circled-wrong" onclick="toggleStuOpt(6,&#39;A&#39;)">A</button><button class="opt circled" onclick="toggleStuOpt(6,&#39;B&#39;)">B</button><button class="opt missed-wrong" onclick="toggleStuOpt(6,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(6,&#39;D&#39;)">D</button>
       <div style="font-size:13px;font-weight:700;color:var(--red);text-align:right">0</div>
     </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
-      <div class="q-num" style="color:var(--amber)">⚠</div>
-      <button class="opt " onclick="toggleStuOpt(7,&#39;A&#39;)">A</button><button class="opt circled-wrong" onclick="toggleStuOpt(7,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(7,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(7,&#39;D&#39;)">D</button>
+      <div class="q-num" style="">8</div>
+      <button class="opt missed-wrong" onclick="toggleStuOpt(7,&#39;A&#39;)">A</button><button class="opt circled-wrong" onclick="toggleStuOpt(7,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(7,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(7,&#39;D&#39;)">D</button>
       <div style="font-size:13px;font-weight:700;color:var(--red);text-align:right">0</div>
     </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
       <div class="q-num" style="">9</div>
@@ -321,7 +323,7 @@ td:first-child { text-align: left; }
       <div style="font-size:13px;font-weight:700;color:var(--green);text-align:right">4</div>
     </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
       <div class="q-num" style="">10</div>
-      <button class="opt " onclick="toggleStuOpt(9,&#39;A&#39;)">A</button><button class="opt circled-wrong" onclick="toggleStuOpt(9,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(9,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(9,&#39;D&#39;)">D</button>
+      <button class="opt " onclick="toggleStuOpt(9,&#39;A&#39;)">A</button><button class="opt circled-wrong" onclick="toggleStuOpt(9,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(9,&#39;C&#39;)">C</button><button class="opt missed-wrong" onclick="toggleStuOpt(9,&#39;D&#39;)">D</button>
       <div style="font-size:13px;font-weight:700;color:var(--red);text-align:right">0</div>
     </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
       <div class="q-num" style="">11</div>
@@ -329,23 +331,23 @@ td:first-child { text-align: left; }
       <div style="font-size:13px;font-weight:700;color:var(--green);text-align:right">4</div>
     </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
       <div class="q-num" style="">12</div>
-      <button class="opt " onclick="toggleStuOpt(11,&#39;A&#39;)">A</button><button class="opt " onclick="toggleStuOpt(11,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(11,&#39;C&#39;)">C</button><button class="opt circled-wrong" onclick="toggleStuOpt(11,&#39;D&#39;)">D</button>
+      <button class="opt " onclick="toggleStuOpt(11,&#39;A&#39;)">A</button><button class="opt " onclick="toggleStuOpt(11,&#39;B&#39;)">B</button><button class="opt missed-wrong" onclick="toggleStuOpt(11,&#39;C&#39;)">C</button><button class="opt circled-wrong" onclick="toggleStuOpt(11,&#39;D&#39;)">D</button>
       <div style="font-size:13px;font-weight:700;color:var(--red);text-align:right">0</div>
     </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
       <div class="q-num" style="">13</div>
-      <button class="opt " onclick="toggleStuOpt(12,&#39;A&#39;)">A</button><button class="opt " onclick="toggleStuOpt(12,&#39;B&#39;)">B</button><button class="opt circled-wrong" onclick="toggleStuOpt(12,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(12,&#39;D&#39;)">D</button>
+      <button class="opt " onclick="toggleStuOpt(12,&#39;A&#39;)">A</button><button class="opt missed-wrong" onclick="toggleStuOpt(12,&#39;B&#39;)">B</button><button class="opt circled-wrong" onclick="toggleStuOpt(12,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(12,&#39;D&#39;)">D</button>
       <div style="font-size:13px;font-weight:700;color:var(--red);text-align:right">0</div>
     </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
-      <div class="q-num" style="color:var(--amber)">⚠</div>
-      <button class="opt " onclick="toggleStuOpt(13,&#39;A&#39;)">A</button><button class="opt circled-wrong" onclick="toggleStuOpt(13,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(13,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(13,&#39;D&#39;)">D</button>
+      <div class="q-num" style="">14</div>
+      <button class="opt missed-wrong" onclick="toggleStuOpt(13,&#39;A&#39;)">A</button><button class="opt circled-wrong" onclick="toggleStuOpt(13,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(13,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(13,&#39;D&#39;)">D</button>
       <div style="font-size:13px;font-weight:700;color:var(--red);text-align:right">0</div>
     </div><div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
       <div class="q-num" style="color:var(--amber)">⚠</div>
       <button class="opt circled-wrong" onclick="toggleStuOpt(14,&#39;A&#39;)">A</button><button class="opt circled" onclick="toggleStuOpt(14,&#39;B&#39;)">B</button><button class="opt " onclick="toggleStuOpt(14,&#39;C&#39;)">C</button><button class="opt " onclick="toggleStuOpt(14,&#39;D&#39;)">D</button>
       <div style="font-size:13px;font-weight:700;color:var(--amber);text-align:right">2</div>
     </div></div><div style="text-align:center;padding:12px 0;border-top:1px solid var(--border);margin-bottom:0">
-    <div class="score-big" style="color:var(--red)">24.0</div>
-    <div class="score-sub">z 60 bodů · 40 %</div>
+    <div class="score-big" style="color:var(--red)">26.0</div>
+    <div class="score-sub">z 60 bodů · 43 %</div>
   </div>
   <div style="text-align:center;padding:12px 0;border-bottom:1px solid var(--border);margin-bottom:14px;font-size:18px;font-weight:700;letter-spacing:0.02em;color:var(--red);background:var(--red-light)">
     ✗ NEPROŠEL
@@ -729,9 +731,11 @@ function renderStudentCard() {
       <div class="q-num" style="${uncertain?'color:var(--amber)':''}">${uncertain?'⚠':q+1}</div>
       ${OPTS.map(o=>{
         const isCircled = ans.has(o);
-        const isWrong = (ans.has(o) && !keySet.has(o)) || (!ans.has(o) && keySet.has(o));
+        const isCircledWrong = ans.has(o) && !keySet.has(o);
+        const isMissed = !ans.has(o) && keySet.has(o);
         let cls='';
-        if(isCircled && isWrong) cls='circled-wrong';
+        if(isCircledWrong) cls='circled-wrong';
+        else if(isMissed) cls='missed-wrong';
         else if(isCircled) cls='circled';
         return `<button class="opt ${cls}" onclick="toggleStuOpt(${q},'${o}')">${o}</button>`;
       }).join('')}
