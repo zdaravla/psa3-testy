@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<!-- saved from url=(0059)file:///C:/Users/zdara/Downloads/psa3_test_evaluator_7.html -->
+<html lang="cs"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>PSA3 Hodnocení testů</title>
+<style>
+:root {
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+  --border: #d8d5ce;
+  --text: #1a1917;
+  --muted: #6b6860;
+  --accent: #1a4a8a;
+  --accent-light: #e8eef7;
+  --green: #1a6b3a;
+  --green-light: #e8f5ee;
+  --red: #8a1a1a;
+  --red-light: #f5e8e8;
+  --amber: #7a5000;
+  --amber-light: #fef3e0;
+  --radius: 10px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: var(--bg); color: var(--text); font-size: 16px; min-height: 100vh; }
+
+.nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 100; }
+.nav h1 { font-size: 18px; font-weight: 700; flex: 1; }
+.nav-sub { font-size: 12px; color: var(--muted); }
+
+.tabs { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); overflow-x: auto; }
+.tab { flex: 1; min-width: 70px; padding: 10px 4px 8px; text-align: center; font-size: 11px; font-weight: 500; color: var(--muted); border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-icon { display: block; font-size: 17px; margin-bottom: 2px; }
+.tab .badge { background: var(--red); color: #fff; border-radius: 999px; font-size: 10px; padding: 1px 5px; margin-left: 2px; display: none; }
+.tab .badge.show { display: inline; }
+
+.page { display: none; padding: 14px; max-width: 600px; margin: 0 auto; padding-bottom: 30px; }
+.page.active { display: block; }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 12px; }
+.card-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 16px; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer; border: none; transition: opacity 0.15s, transform 0.1s; }
+.btn:active { opacity: 0.8; transform: scale(0.97); }
+.btn-primary { background: var(--accent); color: #fff; width: 100%; padding: 14px; font-size: 16px; }
+.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+.btn-green { background: var(--green); color: #fff; width: 100%; padding: 13px; font-size: 15px; }
+.btn-danger { background: var(--red-light); color: var(--red); border: 1px solid #f0c0c0; }
+.btn-sm { padding: 7px 12px; font-size: 13px; }
+.btn-row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.btn[disabled] { opacity: 0.4; pointer-events: none; }
+
+input[type=text], input[type=number], select {
+  width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+  font-size: 16px; background: var(--surface); color: var(--text); -webkit-appearance: none;
+}
+input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(26,74,138,0.1); }
+label { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 4px; }
+.form-group { margin-bottom: 12px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.upload-area { border: 2px dashed var(--border); border-radius: var(--radius); padding: 28px 16px; text-align: center; cursor: pointer; color: var(--muted); font-size: 14px; transition: all 0.15s; }
+.upload-area.has-file { background: var(--green-light); border-color: var(--green); border-style: solid; color: var(--green); }
+.upload-icon { font-size: 36px; display: block; margin-bottom: 8px; }
+input[type=file] { display: none; }
+
+.status-msg { font-size: 13px; padding: 10px 13px; border-radius: 8px; margin: 10px 0; line-height: 1.4; }
+.s-loading { background: var(--accent-light); color: var(--accent); }
+.s-ok { background: var(--green-light); color: var(--green); }
+.s-warn { background: var(--amber-light); color: var(--amber); }
+.s-err { background: var(--red-light); color: var(--red); }
+
+.progress-bar { background: var(--border); border-radius: 999px; height: 5px; overflow: hidden; margin: 8px 0; display: none; }
+.progress-fill { background: var(--accent); height: 100%; transition: width 0.4s; border-radius: 999px; }
+
+.badge { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.b-blue { background: var(--accent-light); color: var(--accent); }
+.b-green { background: var(--green-light); color: var(--green); }
+.b-red { background: var(--red-light); color: var(--red); }
+.b-amber { background: var(--amber-light); color: var(--amber); }
+
+/* ANSWER GRID */
+.ag { display: grid; gap: 5px; align-items: center; margin-bottom: 5px; }
+.ag-4 { grid-template-columns: 32px repeat(4, 1fr); }
+.ag-3 { grid-template-columns: 32px repeat(3, 1fr) 1fr; }
+.q-num { font-size: 13px; font-weight: 700; color: var(--muted); text-align: center; }
+.opt { padding: 9px 2px; text-align: center; border-radius: 7px; border: 1.5px solid var(--border); font-size: 14px; font-weight: 700; cursor: pointer; background: var(--surface); color: var(--text); transition: all 0.1s; user-select: none; -webkit-user-select: none; min-height: 40px; display: flex; align-items: center; justify-content: center; }
+.opt:active { transform: scale(0.9); }
+.opt.sel-key { background: var(--accent); border-color: var(--accent); color: #fff; }
+.opt.correct { background: var(--green); border-color: var(--green); color: #fff; }
+.opt.wrong { background: var(--red); border-color: var(--red); color: #fff; }
+.opt.missed { background: var(--amber-light); border-color: var(--amber); color: var(--amber); }
+.opt.empty { background: var(--bg); color: var(--border); border-color: var(--border); cursor: default; }
+
+.sep { height: 1px; background: var(--border); margin: 12px 0; }
+
+.score-big { font-size: 44px; font-weight: 700; color: var(--accent); text-align: center; line-height: 1; }
+.score-sub { font-size: 13px; color: var(--muted); text-align: center; margin-top: 3px; }
+
+/* STUDENT NAV */
+.student-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.student-nav-info { flex: 1; text-align: center; }
+.student-nav-info strong { display: block; font-size: 15px; }
+.student-nav-info span { font-size: 12px; color: var(--muted); }
+
+/* RESULTS */
+.results-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -14px; padding: 0 14px; }
+table { border-collapse: collapse; font-size: 12px; min-width: 480px; width: 100%; }
+th { background: var(--bg); padding: 7px 5px; text-align: center; font-weight: 600; font-size: 11px; color: var(--muted); border-bottom: 2px solid var(--border); white-space: nowrap; }
+th:first-child { text-align: left; min-width: 120px; }
+td { padding: 7px 5px; text-align: center; border-bottom: 1px solid var(--border); }
+td:first-child { text-align: left; }
+.td-g { color: var(--green); font-weight: 700; }
+.td-m { color: var(--amber); font-weight: 600; }
+.td-r { color: var(--red); font-weight: 600; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; }
+.stat-val { font-size: 28px; font-weight: 700; }
+.stat-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: flex-end; }
+.overlay.open { display: flex; }
+.overlay-sheet { background: var(--surface); border-radius: 16px 16px 0 0; padding: 22px 18px 30px; width: 100%; }
+
+.empty { text-align: center; padding: 50px 20px; color: var(--muted); }
+.empty-icon { font-size: 44px; display: block; margin-bottom: 10px; }
+
+.spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(26,74,138,0.25); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.kos-match-ok { font-size: 12px; color: var(--green); }
+.kos-match-err { font-size: 12px; color: var(--red); }
+
+.step-indicator { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; }
+.step-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); transition: background 0.2s; }
+.step-dot.done { background: var(--green); }
+.step-dot.current { background: var(--accent); width: 20px; border-radius: 5px; }
+.step-dot.warn { background: var(--amber); }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <h1>PSA3 Testy</h1>
+  <span class="nav-sub" id="nav-sub">—</span>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="goTab(0)"><span class="tab-icon">📄</span>PDF<span class="badge" id="badge-0"></span></button>
+  <button class="tab" onclick="goTab(1)"><span class="tab-icon">🔑</span>Klíč<span class="badge" id="badge-1"></span></button>
+  <button class="tab" onclick="goTab(2)"><span class="tab-icon">✅</span>Kontrola<span class="badge" id="badge-2"></span></button>
+  <button class="tab" onclick="goTab(3)"><span class="tab-icon">📊</span>Výsledky<span class="badge" id="badge-3"></span></button>
+</div>
+
+<!-- ===== TAB 0: PDF ===== -->
+<div class="page active" id="page-0">
+  <div class="card">
+    <div class="card-title">Nahrání PDF</div>
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Anthropic API klíč</label>
+      <input type="text" id="api-key" placeholder="sk-ant-..." style="font-family:monospace;font-size:13px" oninput="localStorage.setItem(&#39;psa3_apikey&#39;,this.value)">
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">Klíč se uloží lokálně v prohlížeči. Najdeš ho na console.anthropic.com</div>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px">PDF musí obsahovat: seznam studentů z KOSu, vzorové formuláře (jméno VZOR, správné odpovědi zakroužkované), vyplněné formuláře studentů.</p>
+    <div class="upload-area" id="upload-area" onclick="document.getElementById(&#39;pdf-input&#39;).click()">
+      <span class="upload-icon">📎</span>
+      <strong>Klepni pro výběr PDF</strong><br>
+      <span style="font-size:12px;margin-top:4px;display:block">ze souborů nebo OneDrive</span>
+    </div>
+    <input type="file" id="pdf-input" accept="application/pdf" onchange="handlePDF(event)">
+  </div>
+
+  <div class="card" id="card-process" style="display:none">
+    <div class="card-title">Zpracování</div>
+    <div id="pdf-file-info" style="font-size:13px;color:var(--muted);margin-bottom:12px"></div>
+    <div id="process-status" style="display:none" class="status-msg s-loading"></div>
+    <div class="progress-bar" id="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <button class="btn btn-primary" id="btn-process" onclick="processPDF()">🔍 Spustit rozpoznávání</button>
+  </div>
+</div>
+
+<!-- ===== TAB 1: KLÍČ ===== -->
+<div class="page" id="page-1">
+  <div class="card" id="key-empty-card">
+    <div class="empty" style="padding:30px 0">
+      <span class="empty-icon">🔑</span>
+      <span style="font-size:14px">Klíče se načtou ze vzorových formulářů po zpracování PDF</span>
+    </div>
+  </div>
+  <div id="key-content" style="display:none">
+    <div class="card">
+      <div class="card-title">Správné odpovědi dle skupin</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Rozpoznáno ze vzorových formulářů. Klepnutím oprav případné chyby.</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px" id="key-group-tabs"></div>
+      <div id="key-grid"></div>
+    </div>
+    <button class="btn btn-green" onclick="evaluateAll()">⚡ Vyhodnotit všechny testy</button>
+  </div>
+</div>
+
+<!-- ===== TAB 2: KONTROLA ===== -->
+<div class="page" id="page-2">
+  <div class="empty" id="ctrl-empty">
+    <span class="empty-icon">✅</span>
+    <span style="font-size:14px">Po vyhodnocení zde projdeš každý test</span>
+  </div>
+  <div id="ctrl-content" style="display:none">
+    <div class="step-indicator" id="step-indicator"></div>
+    <div class="student-nav">
+      <button class="btn btn-secondary btn-sm" id="btn-prev" onclick="navStudent(-1)">‹ Předchozí</button>
+      <div class="student-nav-info">
+        <strong id="nav-student-name">—</strong>
+        <span id="nav-student-pos">1 / 1</span>
+      </div>
+      <button class="btn btn-secondary btn-sm" id="btn-next" onclick="navStudent(1)">Další ›</button>
+    </div>
+    <div id="ctrl-card"></div>
+  </div>
+</div>
+
+<!-- ===== TAB 3: VÝSLEDKY ===== -->
+<div class="page" id="page-3">
+  <div class="empty" id="res-empty">
+    <span class="empty-icon">📊</span>
+    <span style="font-size:14px">Zatím žádné výsledky</span>
+  </div>
+  <div id="res-content" style="display:none">
+    <div class="card">
+      <div class="card-title">Souhrn termínu</div>
+      <div class="stat-grid">
+        <div><div class="stat-val" id="s-count" style="color:var(--accent)">0</div><div class="stat-lbl">studentů</div></div>
+        <div><div class="stat-val" id="s-avg" style="color:var(--green)">0%</div><div class="stat-lbl">průměr</div></div>
+        <div><div class="stat-val" id="s-pass" style="color:var(--amber)">0</div><div class="stat-lbl">≥ 50 %</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Výsledky studentů</div>
+      <div class="results-wrap"><table id="results-table"></table></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" style="flex:1" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="btn btn-danger btn-sm" onclick="askClear()">🗑</button>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="overlay-sheet">
+    <div style="font-size:17px;font-weight:700;margin-bottom:6px" id="ov-title"></div>
+    <div style="font-size:14px;color:var(--muted);margin-bottom:18px" id="ov-msg"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeOverlay()">Zrušit</button>
+      <button class="btn btn-danger" style="flex:1" id="ov-confirm">Potvrdit</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const OPTS = ['A','B','C','D'];
+let numQ = 15;
+let keys = {};        // { 'A': ['A','BC','D',...], 'B': [...] }  — index=otázka, hodnota=string odpovědí
+let kosList = [];     // [{cislo,prijmeni,jmeno}]
+let rawStudents = []; // rozpoznaní studenti z API
+let students = [];    // vyhodnocení + potvrzení
+let currentStudent = 0;
+let currentKeyGroup = '';
+let pdfBase64 = null;
+
+// ===== INIT API KEY =====
+const savedKey = localStorage.getItem('psa3_apikey');
+if(savedKey) { const el=document.getElementById('api-key'); if(el) el.value=savedKey; }
+
+// ===== TABS =====
+function goTab(n) {
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===n));
+  document.querySelectorAll('.page').forEach((p,i)=>p.classList.toggle('active',i===n));
+  if(n===1) renderKeyContent();
+  if(n===2) renderCtrlContent();
+  if(n===3) renderResults();
+}
+function setBadge(tab, val) {
+  const el = document.getElementById('badge-'+tab);
+  el.textContent = val||'';
+  el.classList.toggle('show', !!val);
+}
+function setNavSub(txt) { document.getElementById('nav-sub').textContent = txt; }
+
+// ===== PDF =====
+function handlePDF(e) {
+  const file = e.target.files[0]; if(!file) return;
+  const area = document.getElementById('upload-area');
+  area.classList.add('has-file');
+  area.innerHTML = `<span class="upload-icon">📄</span><strong>${file.name}</strong><br><span style="font-size:12px">${(file.size/1024/1024).toFixed(1)} MB · klepni pro změnu</span>`;
+  document.getElementById('pdf-file-info').textContent = file.name+' · '+(file.size/1024/1024).toFixed(2)+' MB';
+  document.getElementById('card-process').style.display='';
+  const r = new FileReader();
+  r.onload = ev => { pdfBase64 = ev.target.result.split(',')[1]; };
+  r.readAsDataURL(file);
+  e.target.value='';
+}
+
+async function processPDF() {
+  if(!pdfBase64) return;
+  const apiKey = document.getElementById('api-key').value.trim();
+  if(!apiKey || !apiKey.startsWith('sk-ant-')) {
+    alert('Zadej platný Anthropic API klíč (začíná sk-ant-)');
+    return;
+  }
+  const btn = document.getElementById('btn-process');
+  const pst = document.getElementById('process-status');
+  const pbar = document.getElementById('progress-bar');
+  const pfill = document.getElementById('progress-fill');
+  btn.disabled=true;
+  pst.style.display=''; pst.className='status-msg s-loading';
+  pst.innerHTML='<span class="spinner"></span>Odesílám do Claude AI…';
+  pbar.style.display=''; pfill.style.width='15%';
+
+  const prompt = `Analyzuj toto PDF. Obsahuje tyto typy stránek:
+1. Seznam studentů z KOSu: tabulka s osobním číslem (6 číslic), příjmením a jménem
+2. Vzorové formuláře: v poli pro jméno je napsáno "VZOR" nebo "V Z O R", mají zakroužkované správné odpovědi, v pravém horním rohu je velké písmeno skupiny (A, B, C, D nebo jiné)
+3. Studentské formuláře: vyplněné studenty, mají jméno, 6-místné osobní číslo v políčkách, skupinu a zakroužkované odpovědi
+
+Úkoly:
+- Ze seznamu KOS extrahuj všechny studenty
+- Ze vzorových formulářů extrahuj klíče správných odpovědí pro každou skupinu
+- Ze studentských formulářů extrahuj jméno, osobní číslo, skupinu a zakroužkované odpovědi
+- Pokud student zakroužkoval více odpovědí u jedné otázky, zaznamenej všechny
+- Pokud student přeškrtl odpověď a zakroužkoval jinou, zaznamenej pouze platnou (nezačrtnutou)
+- Pole "nejistota" = seznam čísel otázek kde si nejsi jistý (přeškrtnuté, nečitelné, víceznačné)
+
+Vrať POUZE platný JSON bez jakéhokoliv dalšího textu:
+{
+  "num_questions": 15,
+  "kos_list": [{"cislo":"123456","prijmeni":"Novák","jmeno":"Jan"}],
+  "vzory": {
+    "A": {"1":"A","2":"BC","3":"D","4":"A","5":"C","6":"BD","7":"A","8":"B","9":"C","10":"D","11":"A","12":"B","13":"C","14":"D","15":"A"},
+    "B": {"1":"B","2":"A",...}
+  },
+  "studenti": [
+    {"jmeno":"NOVÁK JAN","cislo":"123456","skupina":"A","odpovedi":{"1":"A","2":"B","3":"D"},"nejistota":[3,7],"poznamky":{"3":"přeškrtnuté B, zakroužkováno D","7":"nečitelné, možná B nebo D"}}
+  ]
+}
+Pole "poznamky" je objekt kde klíč = číslo otázky (string), hodnota = stručný popis proč si nejsi jistý. Vyplň pouze pro otázky v "nejistota".`;
+
+  try {
+    pfill.style.width='30%';
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':document.getElementById('api-key').value.trim(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify({
+        model:'claude-haiku-4-5-20251001',
+        max_tokens:8000,
+        messages:[{role:'user',content:[
+          {type:'document',source:{type:'base64',media_type:'application/pdf',data:pdfBase64}},
+          {type:'text',text:prompt}
+        ]}]
+      })
+    });
+    pfill.style.width='75%';
+    const data = await resp.json();
+    if(data.error) throw new Error(data.error.message);
+    const text = data.content.filter(c=>c.type==='text').map(c=>c.text).join('');
+    const clean = text.replace(/^```json\s*/,'').replace(/\s*```$/,'').trim();
+    const parsed = JSON.parse(clean);
+    pfill.style.width='95%';
+
+    numQ = parsed.num_questions || 15;
+    kosList = parsed.kos_list || [];
+
+    // Klíče ze vzorů
+    keys = {};
+    if(parsed.vzory) {
+      Object.entries(parsed.vzory).forEach(([g,qmap])=>{
+        keys[g] = Array.from({length:numQ},(_,i)=>(qmap[(i+1).toString()]||'').toUpperCase());
+      });
+    }
+    currentKeyGroup = Object.keys(keys)[0]||'';
+
+    // Surová data studentů
+    rawStudents = (parsed.studenti||[]).map(s=>({
+      ...s,
+      jmeno: s.jmeno||'',
+      cislo: (s.cislo||'').toString(),
+      skupina: (s.skupina||'').toUpperCase(),
+      odpovedi: s.odpovedi||{},
+      nejistota: s.nejistota||[],
+      poznamky: s.poznamky||{},
+      confirmed: false
+    }));
+
+    pfill.style.width='100%';
+    pst.className='status-msg s-ok';
+    pst.innerHTML=`✓ Rozpoznáno: ${kosList.length} studentů v KOS, ${Object.keys(keys).length} skupin (${Object.keys(keys).join(', ')}), ${rawStudents.length} formulářů`;
+    setBadge(0,'✓');
+    setBadge(1, Object.keys(keys).length);
+    setBadge(2, rawStudents.length);
+    setNavSub(`${rawStudents.length} formulářů · ${Object.keys(keys).length} skupin`);
+
+  } catch(err) {
+    pfill.style.width='100%';
+    pst.className='status-msg s-err';
+    pst.textContent='Chyba: '+err.message;
+    btn.disabled=false;
+  }
+}
+
+// ===== KLÍČ =====
+function renderKeyContent() {
+  if(!Object.keys(keys).length) { document.getElementById('key-empty-card').style.display=''; document.getElementById('key-content').style.display='none'; return; }
+  document.getElementById('key-empty-card').style.display='none';
+  document.getElementById('key-content').style.display='';
+  if(!currentKeyGroup || !keys[currentKeyGroup]) currentKeyGroup=Object.keys(keys)[0];
+  // group tabs
+  document.getElementById('key-group-tabs').innerHTML = Object.keys(keys).map(g=>
+    `<button class="btn btn-sm ${g===currentKeyGroup?'btn-primary':'btn-secondary'}" onclick="selectKeyGroup('${g}')">${g}</button>`
+  ).join('');
+  renderKeyGrid();
+}
+
+function selectKeyGroup(g) { currentKeyGroup=g; renderKeyContent(); }
+
+function renderKeyGrid() {
+  if(!keys[currentKeyGroup]) return;
+  const k = keys[currentKeyGroup];
+  let html = `<div class="ag ag-4" style="margin-bottom:6px">
+    <div style="font-size:11px;color:var(--muted);text-align:center">Q</div>
+    ${OPTS.map(o=>`<div style="font-size:12px;font-weight:700;color:var(--muted);text-align:center">${o}</div>`).join('')}
+  </div>`;
+  for(let q=0;q<numQ;q++) {
+    const sel = new Set([...(k[q]||'')]);
+    html+=`<div class="ag ag-4">
+      <div class="q-num">${q+1}</div>
+      ${OPTS.map(o=>`<button class="opt ${sel.has(o)?'sel-key':''}" onclick="toggleKeyOpt(${q},'${o}')">${o}</button>`).join('')}
+    </div>`;
+  }
+  document.getElementById('key-grid').innerHTML=html;
+}
+
+function toggleKeyOpt(q,opt) {
+  if(!keys[currentKeyGroup]) return;
+  const cur = new Set([...(keys[currentKeyGroup][q]||'')]);
+  if(cur.has(opt)) cur.delete(opt); else cur.add(opt);
+  keys[currentKeyGroup][q]=[...cur].join('');
+  renderKeyGrid();
+}
+
+// ===== VYHODNOCENÍ =====
+function calcQScore(qIdx, studentOpts, skupina) {
+  const keyArr = keys[skupina];
+  if(!keyArr) return {score:0,max:5};
+  const keyStr = keyArr[qIdx]||'';
+  if(!keyStr) return {score:0,max:5};
+  const keySet = new Set([...keyStr]);
+  const ansSet = new Set([...(studentOpts||'').toUpperCase()].filter(o=>OPTS.includes(o)));
+  let chyby=0;
+  ansSet.forEach(o=>{ if(!keySet.has(o)) chyby++; });
+  keySet.forEach(o=>{ if(!ansSet.has(o)) chyby++; });
+  return {score: Math.max(0, 4-chyby), max:4};
+}
+
+function calcTotal(odpovedi, skupina) {
+  let total=0;
+  for(let q=0;q<numQ;q++) total+=calcQScore(q,(odpovedi[(q+1).toString()]||''),skupina).score;
+  return total;
+}
+
+function matchKos(cislo, jmeno) {
+  if(cislo && kosList.length) {
+    const f = kosList.find(k=>k.cislo===cislo.toString()); if(f) return f;
+  }
+  if(jmeno && kosList.length) {
+    const j = jmeno.toLowerCase().replace(/\s+/g,' ').trim();
+    return kosList.find(k=>{
+      const f1=(k.prijmeni+' '+k.jmeno).toLowerCase();
+      const f2=(k.jmeno+' '+k.prijmeni).toLowerCase();
+      return f1===j||f2===j;
+    })||null;
+  }
+  return null;
+}
+
+function evaluateAll() {
+  students = rawStudents.map(s=>{
+    const matched = matchKos(s.cislo, s.jmeno);
+    const total = calcTotal(s.odpovedi, s.skupina);
+    const maxTotal = numQ*4;
+    return {
+      ...s,
+      matched,
+      total, maxTotal,
+      pct: Math.round(total/maxTotal*100),
+      confirmed: false
+    };
+  });
+  currentStudent=0;
+  setBadge(2, students.filter(s=>!s.confirmed).length || null);
+  setNavSub(`Kontrola: 0 / ${students.length} potvrzeno`);
+  goTab(2);
+}
+
+// ===== KONTROLA =====
+function renderCtrlContent() {
+  const empty = document.getElementById('ctrl-empty');
+  const content = document.getElementById('ctrl-content');
+  if(!students.length) { empty.style.display=''; content.style.display='none'; return; }
+  empty.style.display='none'; content.style.display='';
+  renderStepIndicator();
+  renderStudentCard();
+}
+
+function renderStepIndicator() {
+  document.getElementById('step-indicator').innerHTML = students.map((s,i)=>{
+    let cls = i===currentStudent?'current':s.confirmed?'done':(s.nejistota&&s.nejistota.length)?'warn':'';
+    return `<div class="step-dot ${cls}" onclick="jumpStudent(${i})" title="${s.jmeno}"></div>`;
+  }).join('');
+}
+
+function navStudent(dir) {
+  currentStudent = Math.max(0,Math.min(students.length-1,currentStudent+dir));
+  renderStepIndicator();
+  renderStudentCard();
+}
+function jumpStudent(i) { currentStudent=i; renderStepIndicator(); renderStudentCard(); }
+
+function renderStudentCard() {
+  const s = students[currentStudent];
+  if(!s) return;
+  const total = calcTotal(s.odpovedi, s.skupina);
+  const pct = Math.round(total/(numQ*4)*100);
+  const hasWarn = s.nejistota&&s.nejistota.length>0;
+  const matched = s.matched;
+
+  document.getElementById('nav-student-name').textContent = s.jmeno||'Neznámý';
+  document.getElementById('nav-student-pos').textContent = `${currentStudent+1} / ${students.length}`;
+  document.getElementById('btn-prev').disabled = currentStudent===0;
+  document.getElementById('btn-next').disabled = currentStudent===students.length-1;
+
+  const keyArr = keys[s.skupina]||[];
+
+  let html = `<div class="card">`;
+
+  // Jméno + číslo
+  html+=`<div class="form-row" style="margin-bottom:10px">
+    <div class="form-group" style="margin:0">
+      <label>Jméno</label>
+      <input type="text" value="${escHtml(s.jmeno)}" onchange="updateStu('jmeno',this.value)">
+    </div>
+    <div class="form-group" style="margin:0">
+      <label>Osobní číslo</label>
+      <input type="text" value="${escHtml(s.cislo)}" maxlength="6" onchange="updateStu('cislo',this.value);recheckKos()">
+    </div>
+  </div>`;
+
+  // Skupina
+  html+=`<div class="form-group" style="margin-bottom:12px">
+    <label>Skupina</label>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      ${Object.keys(keys).map(g=>`<button class="btn btn-sm ${s.skupina===g?'btn-primary':'btn-secondary'}" onclick="updateStu('skupina','${g}');renderStudentCard()">${g}</button>`).join('')}
+    </div>
+  </div>`;
+
+  // KOS status
+  if(matched) {
+    html+=`<div class="status-msg s-ok" style="font-size:12px;padding:7px 12px;margin-bottom:10px">✓ KOS: ${matched.prijmeni} ${matched.jmeno} · ${matched.cislo}</div>`;
+  } else {
+    html+=`<div class="status-msg s-warn" style="font-size:12px;padding:7px 12px;margin-bottom:10px">⚠ Nenalezen v KOS — zkontroluj osobní číslo</div>`;
+  }
+
+  // Varování nejistoty
+  if(hasWarn) {
+    html+=`<div class="status-msg s-warn" style="font-size:12px;padding:7px 12px;margin-bottom:10px">⚠ Zkontroluj otázky: ${s.nejistota.join(', ')} — důvody viz u každé otázky níže</div>`;
+  }
+
+  // Odpovědi
+  html+=`<div style="margin-bottom:12px">
+    <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">Odpovědi · klepnutím oprav</div>
+    <div class="ag ag-4" style="margin-bottom:6px">
+      <div></div>
+      ${OPTS.map(o=>`<div style="font-size:12px;font-weight:700;color:var(--muted);text-align:center">${o}</div>`).join('')}
+    </div>`;
+
+  for(let q=0;q<numQ;q++) {
+    const qKey=(q+1).toString();
+    const ans=new Set([...(s.odpovedi[qKey]||'').toUpperCase()].filter(o=>OPTS.includes(o)));
+    const keySet=new Set([...(keyArr[q]||'')]);
+    const uncertain=s.nejistota&&s.nejistota.includes(q+1);
+    const pozn=(s.poznamky&&s.poznamky[(q+1).toString()])||'';
+    const qScore=calcQScore(q,s.odpovedi[qKey]||'',s.skupina).score;
+    const scoreCol=qScore<=0?'var(--red)':qScore<4?'var(--amber)':'var(--green)';
+    html+=`<div style="display:grid;grid-template-columns:32px repeat(4,1fr) 36px;gap:5px;align-items:center;margin-bottom:4px">
+      <div class="q-num" style="${uncertain?'color:var(--amber)':''}">${uncertain?'⚠':q+1}</div>
+      ${OPTS.map(o=>{
+        let cls='';
+        if(ans.has(o)) cls=keySet.has(o)?'correct':'wrong';
+        else if(keySet.has(o)) cls='missed';
+        return `<button class="opt ${cls}" onclick="toggleStuOpt(${q},'${o}')">${o}</button>`;
+      }).join('')}
+      <div style="font-size:13px;font-weight:700;color:${scoreCol};text-align:right">${qScore.toFixed(0)}</div>
+    </div>`;
+    if(uncertain&&pozn) html+=`<div style="font-size:11px;color:var(--amber);padding:1px 0 5px 36px;line-height:1.4">↳ ${escHtml(pozn)}</div>`;
+  }
+  html+=`</div>`;
+
+  // Skóre
+  const passed = total >= numQ*4*0.5;
+  html+=`<div style="text-align:center;padding:12px 0;border-top:1px solid var(--border);margin-bottom:0">
+    <div class="score-big" style="color:${passed?'var(--green)':'var(--red)'}">${total.toFixed(1)}</div>
+    <div class="score-sub">z ${numQ*4} bodů · ${pct} %</div>
+  </div>
+  <div style="text-align:center;padding:12px 0;border-bottom:1px solid var(--border);margin-bottom:14px;font-size:18px;font-weight:700;letter-spacing:0.02em;color:${passed?'var(--green)':'var(--red)'};background:${passed?'var(--green-light)':'var(--red-light)'}">
+    ${passed ? '✓ PROŠEL' : '✗ NEPROŠEL'}
+  </div>`;
+
+  // Potvrdit
+  html+=`<button class="btn ${s.confirmed?'btn-secondary':'btn-green'}" onclick="confirmStudent()">
+    ${s.confirmed?'✓ Potvrzeno — znovu uložit':'✓ Potvrdit a uložit'}
+  </button>`;
+
+  html+=`</div>`;
+  document.getElementById('ctrl-card').innerHTML=html;
+}
+
+function updateStu(field,val) {
+  if(!students[currentStudent]) return;
+  students[currentStudent][field]=val;
+  if(field==='skupina') {
+    students[currentStudent].total=calcTotal(students[currentStudent].odpovedi,val);
+    students[currentStudent].pct=Math.round(students[currentStudent].total/(numQ*4)*100);
+  }
+}
+
+function recheckKos() {
+  const s=students[currentStudent];
+  s.matched=matchKos(s.cislo,s.jmeno);
+  renderStudentCard();
+}
+
+function toggleStuOpt(q,opt) {
+  const s=students[currentStudent];
+  const qKey=(q+1).toString();
+  const cur=new Set([...(s.odpovedi[qKey]||'').toUpperCase()].filter(o=>OPTS.includes(o)));
+  if(cur.has(opt)) cur.delete(opt); else cur.add(opt);
+  s.odpovedi[qKey]=[...cur].join('');
+  s.total=calcTotal(s.odpovedi,s.skupina);
+  s.pct=Math.round(s.total/(numQ*4)*100);
+  renderStudentCard();
+  renderStepIndicator();
+}
+
+function confirmStudent() {
+  const s=students[currentStudent];
+  s.confirmed=true;
+  s.total=calcTotal(s.odpovedi,s.skupina);
+  s.pct=Math.round(s.total/(numQ*4)*100);
+  const remaining=students.filter(x=>!x.confirmed).length;
+  setBadge(2,remaining||null);
+  setNavSub(`Kontrola: ${students.filter(x=>x.confirmed).length} / ${students.length} potvrzeno`);
+  renderStepIndicator();
+  renderStudentCard();
+  // auto-advance
+  if(currentStudent<students.length-1) setTimeout(()=>{ navStudent(1); },300);
+  else { setBadge(3,students.length); }
+}
+
+// ===== VÝSLEDKY =====
+function renderResults() {
+  const confirmed = students.filter(s=>s.confirmed);
+  const empty=document.getElementById('res-empty');
+  const content=document.getElementById('res-content');
+  if(!confirmed.length) { empty.style.display=''; content.style.display='none'; return; }
+  empty.style.display='none'; content.style.display='';
+
+  const avg=confirmed.reduce((s,x)=>s+x.pct,0)/confirmed.length;
+  const pass=confirmed.filter(s=>s.pct>=50).length;
+  document.getElementById('s-count').textContent=confirmed.length;
+  document.getElementById('s-avg').textContent=Math.round(avg)+'%';
+  document.getElementById('s-pass').textContent=pass;
+
+  const sorted=[...confirmed].sort((a,b)=>b.total-a.total);
+  let html=`<thead><tr><th>Jméno</th><th>Číslo</th><th>Sk.</th><th>Body</th><th>%</th>`;
+  for(let q=1;q<=numQ;q++) html+=`<th>${q}</th>`;
+  html+=`</tr></thead><tbody>`;
+  sorted.forEach(s=>{
+    const cls=s.pct>=75?'td-g':s.pct>=50?'td-m':'td-r';
+    html+=`<tr><td>${escHtml(s.prijmeni||s.jmeno.split(' ')[0]||s.jmeno)} ${escHtml(s.jmeno.split(' ').slice(1).join(' ')||'')}</td>`;
+    html+=`<td style="font-size:11px">${s.cislo}</td><td>${s.skupina}</td>`;
+    html+=`<td class="${cls}">${s.total.toFixed(1)}</td><td class="${cls}">${s.pct}%</td>`;
+    for(let q=1;q<=numQ;q++) {
+      const sc=calcQScore(q-1,s.odpovedi[q.toString()]||'',s.skupina).score;
+      const c=sc>=4?'td-g':sc>=2?'td-m':'td-r';
+      html+=`<td class="${c}">${sc.toFixed(1)}</td>`;
+    }
+    html+=`</tr>`;
+  });
+  html+=`</tbody>`;
+  document.getElementById('results-table').innerHTML=html;
+}
+
+// ===== EXPORT =====
+function exportCSV() {
+  const confirmed=students.filter(s=>s.confirmed);
+  if(!confirmed.length) return;
+  let csv='\uFEFF';
+  let hdr='Příjmení,Jméno';
+  for(let q=1;q<=numQ;q++) hdr+=`,Q${q}`;
+  hdr+=',Celkem,Procenta,Skupina,Osobní číslo';
+  csv+=hdr+'\n';
+  confirmed.sort((a,b)=>(a.matched?a.matched.prijmeni:a.jmeno).localeCompare(b.matched?b.matched.prijmeni:b.jmeno,'cs')).forEach(s=>{
+    const prijmeni=s.matched?s.matched.prijmeni:(s.jmeno.split(' ')[0]||s.jmeno);
+    const jmeno=s.matched?s.matched.jmeno:(s.jmeno.split(' ').slice(1).join(' ')||'');
+    let row=`"${prijmeni}","${jmeno}"`;
+    for(let q=1;q<=numQ;q++) {
+      const sc=calcQScore(q-1,s.odpovedi[q.toString()]||'',s.skupina).score;
+      row+=','+sc.toFixed(0);
+    }
+    row+=`,${s.total.toFixed(0)},${s.pct},${s.skupina},${s.cislo}`;
+    csv+=row+'\n';
+  });
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='psa3_vysledky.csv'; a.click();
+}
+
+// ===== HELPERS =====
+function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function askClear() {
+  document.getElementById('ov-title').textContent='Vymazat vše';
+  document.getElementById('ov-msg').textContent='Opravdu vymazat všechny výsledky a klíče?';
+  document.getElementById('ov-confirm').onclick=()=>{ students=[];rawStudents=[];keys={};kosList=[];pdfBase64=null;
+    document.getElementById('upload-area').classList.remove('has-file');
+    document.getElementById('upload-area').innerHTML='<span class="upload-icon">📎</span><strong>Klepni pro výběr PDF</strong><br><span style="font-size:12px;margin-top:4px;display:block">ze souborů nebo OneDrive</span>';
+    document.getElementById('card-process').style.display='none';
+    [0,1,2,3].forEach(i=>setBadge(i,null));
+    setNavSub('—'); closeOverlay(); goTab(0); };
+  document.getElementById('overlay').classList.add('open');
+}
+function closeOverlay() { document.getElementById('overlay').classList.remove('open'); }
+</script>
+
+
+</body></html>
